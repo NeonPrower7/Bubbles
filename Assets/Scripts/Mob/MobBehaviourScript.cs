@@ -1,31 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MobBehaviourScript : MonoBehaviour
 {
-public Transform[] waypoints; // Точки пути для движения врага
-    public float speed = 2f; // Скорость движения врага
-    public float chaseSpeed = 4f; // Скорость преследования игрока
-    public float chaseDistance = 5f; // Радиус обнаружения игрока
-    public Transform player; // Ссылка на объект игрока
-    public float killDistance = 0.5f; // Дистанция для убийства игрока
+    [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
+    [SerializeField] Transform player; // Ссылка на объект игрока
+    [SerializeField] LayerMask enemyLayer;
+    public float speed; // Скорость движения врага
+    public float chaseSpeed; // Скорость преследования игрока
+    public float chaseDistance; // Радиус обнаружения игрока
+    public float killDistance; // Дистанция для убийства игрока
 
+    private Transform[] waypoints; // Точки пути для движения врага
+    private RaycastHit2D hit;
     private int currentWaypointIndex = 0;
     private bool isChasing = false;
 
+    void Awake()
+    {
+        // Собираем все точки передвижения
+        waypoints = new Transform[path.childCount];
+        for(int i = 0; i < path.childCount; i++)
+        {
+            waypoints[i] = path.GetChild(i).transform;
+        }
+    }
+
     void Update()
     {
-        if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
-        {
-            // Начинаем преследовать игрока
-            isChasing = true;
-        }
-        else
-        {
-            // Продолжаем двигаться по траектории
-            isChasing = false;
-        }
+        TurnToPlayer();
+        SearchForPlayer();
 
         if (isChasing)
         {
@@ -43,9 +49,36 @@ public Transform[] waypoints; // Точки пути для движения в�
         }
     }
 
-    void Patrol()
+    private void TurnToPlayer()
     {
-        // Движение по траектории
+        Vector2 change = player.position - transform.position;
+        float rotation = Mathf.Atan2(change.x, change.y) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, -rotation);
+    }
+
+    private void SearchForPlayer()
+    {
+        if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
+        {
+            Debug.DrawRay(transform.position, transform.up * chaseDistance, Color.red);
+            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, enemyLayer);
+            if (hit.collider != null)
+            {
+                if (hit.transform.CompareTag("Player")) isChasing = true;
+                else if (hit.transform.CompareTag("Target")) isChasing = true;
+                else isChasing = false;
+            }
+        }
+        else isChasing = false;
+    }
+
+    private void ChasePlayer()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
+    }
+
+    private void Patrol()
+    {
         Transform targetWaypoint = waypoints[currentWaypointIndex];
         transform.position = Vector3.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
@@ -55,16 +88,12 @@ public Transform[] waypoints; // Точки пути для движения в�
         }
     }
 
-    void ChasePlayer()
-    {
-        // Преследование игрока
-        transform.position = Vector3.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
-    }
 
-    void KillPlayer()
+    private void KillPlayer()
     {
         // Действия при убийстве игрока (например, перезагрузка сцены)
         Debug.Log("Player Killed");
+        Destroy(player.gameObject);
         // Здесь можно добавить логику для перезагрузки сцены или уменьшения здоровья игрока
     }
 
