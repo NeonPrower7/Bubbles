@@ -58,18 +58,18 @@ public class BossController : MonoBehaviour
         if(other.transform.tag == "Explosive")
         {
             state = BossState.Die;
+            Die();
         }
         else
         {
-            transform.position = new Vector3(0, 26, 0);
+            transform.position = new Vector3(0, 21, 0);
             transform.Rotate(0, 0, 0);
             state = BossState.Ready;
         }
     }
 
-    private IEnumerator Die()
+    private void Die()
     {
-        yield return null;
-        Destroy(this);
+        Destroy(gameObject);
     }
 }

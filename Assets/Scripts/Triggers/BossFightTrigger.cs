@@ -11,6 +11,6 @@ public class BossFightTrigger : MonoBehaviour
     {
         StartCoroutine(boss.PlayAnimation());
         door.SetActive(true);
-        Destroy(this);
+        Destroy(gameObject);
     }
 }
