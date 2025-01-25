@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class MobBehaviourScript : MonoBehaviour
 {
-    public Transform[] waypoints; // Точки пути для движения врага
+    [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
     [SerializeField] Transform player; // Ссылка на объект игрока
     public float speed; // Скорость движения врага
     public float chaseSpeed; // Скорость преследования игрока
     public float chaseDistance; // Радиус обнаружения игрока
     public float killDistance; // Дистанция для убийства игрока
 
+    private Transform[] waypoints; // Точки пути для движения врага
     private int currentWaypointIndex = 0;
     private bool isChasing = false;
+
+    void Awake()
+    {
+        // Собираем все точки передвижения
+        waypoints = new Transform[path.childCount];
+        for(int i = 0; i < path.childCount; i++)
+        {
+            waypoints[i] = path.GetChild(i).transform;
+        }
+    }
 
     void Update()
     {
