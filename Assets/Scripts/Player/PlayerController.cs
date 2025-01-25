@@ -11,11 +11,19 @@ public class PlayerController : MonoBehaviour
     private float _verticalInput;
     private Vector2 _direction;
 
+    [Header("Distraction")]
+    [SerializeField] GameObject bubble;
+    public int maxBubbles;
+    private int bubbleCounter;
+
     private Rigidbody2D _rb;
+    private EnemyManager _enemy;
 
     void Start()
     {
+        bubbleCounter = maxBubbles;
         _rb = GetComponent<Rigidbody2D>();
+        _enemy = FindObjectOfType<EnemyManager>();
     }
 
     void Update()
@@ -25,5 +33,22 @@ public class PlayerController : MonoBehaviour
         _direction = new Vector2(_horizontalInput, _verticalInput);
 
         _rb.velocity = _direction.normalized * speed;
+
+        if (Input.GetKeyDown(KeyCode.Space)) ThrowBubble();
+    }
+
+    private void ThrowBubble()
+    {
+        if(bubbleCounter > 0)
+        {
+            bubbleCounter--;
+            GameObject bubbleObj = Instantiate(bubble, transform.position, transform.rotation);
+            _enemy.SetEnemiesTargetToItem(bubbleObj);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.transform.CompareTag("Enemy")) Destroy(gameObject);
     }
 }
