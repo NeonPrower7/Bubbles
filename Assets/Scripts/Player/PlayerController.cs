@@ -56,9 +56,8 @@ public class PlayerController : MonoBehaviour
         bubbleCounter++;
         counter.text = "Bubbles: " + bubbleCounter;
     }
-
-    private void OnCollisionEnter2D(Collision2D other)
+    public void Die()
     {
-        if (other.transform.CompareTag("Enemy")) Destroy(gameObject);
+        Destroy(gameObject);
     }
 }

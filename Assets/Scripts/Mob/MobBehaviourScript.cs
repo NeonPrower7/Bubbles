@@ -5,7 +5,9 @@ using UnityEngine.AI;
 
 public class MobBehaviourScript : MonoBehaviour
 {
+    [SerializeField] Animator animator;
     [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
+    [SerializeField] Transform orientation;
     [SerializeField] LayerMask detectLayer;
     public float speed; // Скорость движения врага
     public float chaseSpeed; // Скорость преследования игрока
@@ -29,7 +31,9 @@ public class MobBehaviourScript : MonoBehaviour
 
     void Update()
     {
-        if(target != null) SearchForTarget();
+        if (target == null) return;
+            
+        SearchForTarget();
 
         if (isChasing)
         {
@@ -41,12 +45,21 @@ public class MobBehaviourScript : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.transform.CompareTag("Player"))
+        {
+            isChasing = false;
+            animator.SetTrigger("Explode");
+        }
+    }
+
     private void SearchForTarget()
     {
         if (Vector3.Distance(transform.position, target.position) <= chaseDistance)
         {
             TurnToTarget();
-            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, detectLayer);
+            hit = Physics2D.Raycast(transform.position, orientation.up, chaseDistance, detectLayer);
             if (hit.collider != null)
             {
                 if (hit.transform.CompareTag("Target")) isChasing = true;
@@ -61,7 +74,7 @@ public class MobBehaviourScript : MonoBehaviour
     {
         Vector2 change = target.position - transform.position;
         float rotation = Mathf.Atan2(change.x, change.y) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, -rotation);
+        orientation.rotation = Quaternion.Euler(0, 0, -rotation);
     }
 
 
