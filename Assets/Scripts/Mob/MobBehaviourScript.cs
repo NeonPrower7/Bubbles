@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class MobBehaviourScript : MonoBehaviour
 {
     [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
-    [SerializeField] LayerMask enemyLayer;
+    [SerializeField] LayerMask detectLayer;
     public float speed; // Скорость движения врага
     public float chaseSpeed; // Скорость преследования игрока
     public float chaseDistance; // Радиус обнаружения игрока
@@ -46,8 +46,7 @@ public class MobBehaviourScript : MonoBehaviour
         if (Vector3.Distance(transform.position, target.position) <= chaseDistance)
         {
             TurnToTarget();
-            Debug.DrawRay(transform.position, transform.up * chaseDistance, Color.red);
-            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, enemyLayer);
+            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, detectLayer);
             if (hit.collider != null)
             {
                 if (hit.transform.CompareTag("Target")) isChasing = true;
@@ -85,12 +84,5 @@ public class MobBehaviourScript : MonoBehaviour
     public void SetTarget(GameObject newTarget)
     {
         target = newTarget.transform;
-    }
-
-    // Визуализация зоны обнаружения в редакторе
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, chaseDistance);
     }
 }
