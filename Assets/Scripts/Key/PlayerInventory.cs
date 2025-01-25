@@ -8,7 +8,6 @@ public class PlayerInventory : MonoBehaviour
     public void AddKey()
     {
         keyCount++;
-        Debug.Log("You have" + keyCount + "keys");
     }
 
     // Метод для проверки наличия ключа
@@ -23,7 +22,6 @@ public class PlayerInventory : MonoBehaviour
         if (keyCount > 0)
         {
             keyCount--;
-            Debug.Log("Ключ использован! Оставшееся количество ключей: " + keyCount);
         }
     }
 }
