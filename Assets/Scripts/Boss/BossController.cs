@@ -61,13 +61,13 @@ public class BossController : MonoBehaviour
     {
         _rb.velocity = Vector3.zero;
         transform.position = new Vector3(0, 21, 0);
-        state = BossState.Ready;
         if (other.transform.tag == "Column")
         {
             Destroy(other.gameObject);
             columnCounter--;
             if(columnCounter <= 0) Die();
         }
+        state = BossState.Ready;
     }
 
     private void Die()
