@@ -35,10 +35,9 @@ public class BossController : MonoBehaviour
         else if (state == BossState.Waiting) Aiming();
     }
 
-    public IEnumerator PlayAnimation()
+    public void PlayAnimation()
     {
         state = BossState.Ready;
-        yield return null;
     }
 
     private void Aiming()

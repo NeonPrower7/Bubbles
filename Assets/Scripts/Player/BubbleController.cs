@@ -37,7 +37,7 @@ public class BubbleController : MonoBehaviour
     private IEnumerator Die()
     {
         _timerStarted = true;
-
+        Debug.Log("Dying");
         yield return new WaitForSeconds(destroyTime);
 
         _enemy.SetEnemiesTargetToPlayer();

@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 _direction;
 
     [Header("Distraction")]
+    public bool canThrowBubbles;
+    [SerializeField] GameObject cross;
     [SerializeField] TMP_Text counter;
     [SerializeField] GameObject bubble;
     public int maxBubbles;
@@ -24,6 +26,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        canThrowBubbles = true;
+        cross.SetActive(false);
         bubbleCounter = maxBubbles;
         counter.text = "Bubbles: " + bubbleCounter;
         _rb = GetComponent<Rigidbody2D>();
@@ -38,7 +42,8 @@ public class PlayerController : MonoBehaviour
 
         _rb.velocity = _direction.normalized * speed;
 
-        if (Input.GetKeyDown(KeyCode.Space)) ThrowBubble();
+        cross.SetActive(!canThrowBubbles);
+        if (Input.GetKeyDown(KeyCode.Space) && canThrowBubbles) ThrowBubble();
     }
 
     private void ThrowBubble()
@@ -47,7 +52,8 @@ public class PlayerController : MonoBehaviour
         {
             bubbleCounter--;
             counter.text = "Bubbles: " + bubbleCounter;
-            GameObject bubbleObj = Instantiate(bubble, transform.position, transform.rotation);
+            Vector3 spawnPosition = transform.position + transform.right;
+            GameObject bubbleObj = Instantiate(bubble, spawnPosition, transform.rotation);
             _enemy.SetEnemiesTargetToItem(bubbleObj);
         }
     }
