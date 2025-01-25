@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _direction;
 
     [Header("Distraction")]
+    [SerializeField] TMP_Text counter;
     [SerializeField] GameObject bubble;
     public int maxBubbles;
     private int bubbleCounter;
@@ -22,6 +25,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         bubbleCounter = maxBubbles;
+        counter.text = "Bubbles: " + bubbleCounter;
         _rb = GetComponent<Rigidbody2D>();
         _enemy = FindObjectOfType<EnemyManager>();
     }
@@ -42,13 +46,18 @@ public class PlayerController : MonoBehaviour
         if(bubbleCounter > 0)
         {
             bubbleCounter--;
+            counter.text = "Bubbles: " + bubbleCounter;
             GameObject bubbleObj = Instantiate(bubble, transform.position, transform.rotation);
             _enemy.SetEnemiesTargetToItem(bubbleObj);
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D other)
+    public void PickBubble()
     {
-        if (other.transform.CompareTag("Enemy")) Destroy(gameObject);
+        bubbleCounter++;
+        counter.text = "Bubbles: " + bubbleCounter;
+    }
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }

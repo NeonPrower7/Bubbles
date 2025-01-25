@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8176305788534163015}
   - component: {fileID: 2180154415819002176}
-  - component: {fileID: 6285803579426317075}
+  - component: {fileID: 4696786994304544495}
   - component: {fileID: 5978022094680544867}
   - component: {fileID: 2172817720704287704}
   - component: {fileID: 1679547373245780523}
@@ -89,8 +89,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &6285803579426317075
-BoxCollider2D:
+--- !u!58 &4696786994304544495
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -122,18 +122,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!50 &5978022094680544867
 Rigidbody2D:
   serializedVersion: 4
@@ -174,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  counter: {fileID: 0}
   bubble: {fileID: 6642764016900816026, guid: 6428251142efcd84bb5f313a554335cd, type: 3}
   maxBubbles: 5
 --- !u!114 &1679547373245780523
