@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class MobBehaviourScript : MonoBehaviour
 {
-public Transform[] waypoints; // Точки пути для движения врага
-    public float speed = 2f; // Скорость движения врага
-    public float chaseSpeed = 4f; // Скорость преследования игрока
-    public float chaseDistance = 5f; // Радиус обнаружения игрока
-    public Transform player; // Ссылка на объект игрока
-    public float killDistance = 0.5f; // Дистанция для убийства игрока
+    public Transform[] waypoints; // Точки пути для движения врага
+    [SerializeField] Transform player; // Ссылка на объект игрока
+    public float speed; // Скорость движения врага
+    public float chaseSpeed; // Скорость преследования игрока
+    public float chaseDistance; // Радиус обнаружения игрока
+    public float killDistance; // Дистанция для убийства игрока
 
     private int currentWaypointIndex = 0;
     private bool isChasing = false;
@@ -65,6 +65,7 @@ public Transform[] waypoints; // Точки пути для движения в�
     {
         // Действия при убийстве игрока (например, перезагрузка сцены)
         Debug.Log("Player Killed");
+        Destroy(player.gameObject);
         // Здесь можно добавить логику для перезагрузки сцены или уменьшения здоровья игрока
     }
 
