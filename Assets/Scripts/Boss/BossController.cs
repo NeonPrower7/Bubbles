@@ -55,8 +55,21 @@ public class BossController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         _rb.velocity = Vector2.zero;
-        transform.position = new Vector3(0, 26, 0);
-        transform.Rotate(0, 0, 0);
-        state = BossState.Ready;
+        if(other.transform.tag == "Explosive")
+        {
+            state = BossState.Die;
+        }
+        else
+        {
+            transform.position = new Vector3(0, 26, 0);
+            transform.Rotate(0, 0, 0);
+            state = BossState.Ready;
+        }
+    }
+
+    private IEnumerator Die()
+    {
+        yield return null;
+        Destroy(this);
     }
 }
