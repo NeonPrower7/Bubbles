@@ -16,11 +16,15 @@ public class BossController : MonoBehaviour
     public float attackDelayTime;
     public float speed;
 
+    [Header("Die")]
+    [SerializeField] GameObject key;
+
     private Rigidbody2D _rb;
 
     void Awake()
     {
         state = BossState.Inactive;
+        key.SetActive(false);
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -70,6 +74,7 @@ public class BossController : MonoBehaviour
 
     private void Die()
     {
+        key.SetActive(true);
         Destroy(gameObject);
     }
 }
