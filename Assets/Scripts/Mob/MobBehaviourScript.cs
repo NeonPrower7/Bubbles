@@ -6,12 +6,14 @@ public class MobBehaviourScript : MonoBehaviour
 {
     [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
     [SerializeField] Transform player; // Ссылка на объект игрока
+    [SerializeField] LayerMask enemyLayer;
     public float speed; // Скорость движения врага
     public float chaseSpeed; // Скорость преследования игрока
     public float chaseDistance; // Радиус обнаружения игрока
     public float killDistance; // Дистанция для убийства игрока
 
     private Transform[] waypoints; // Точки пути для движения врага
+    private RaycastHit2D hit;
     private int currentWaypointIndex = 0;
     private bool isChasing = false;
 
@@ -27,16 +29,8 @@ public class MobBehaviourScript : MonoBehaviour
 
     void Update()
     {
-        if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
-        {
-            // Начинаем преследовать игрока
-            isChasing = true;
-        }
-        else
-        {
-            // Продолжаем двигаться по траектории
-            isChasing = false;
-        }
+        TurnToPlayer();
+        SearchForPlayer();
 
         if (isChasing)
         {
@@ -54,9 +48,36 @@ public class MobBehaviourScript : MonoBehaviour
         }
     }
 
-    void Patrol()
+    private void TurnToPlayer()
     {
-        // Движение по траектории
+        Vector2 change = player.position - transform.position;
+        float rotation = Mathf.Atan2(change.x, change.y) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, -rotation);
+    }
+
+    private void SearchForPlayer()
+    {
+        if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
+        {
+            Debug.DrawRay(transform.position, transform.up * chaseDistance, Color.red);
+            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, enemyLayer);
+            if (hit.collider != null)
+            {
+                if (hit.transform.CompareTag("Player")) isChasing = true;
+                else if (hit.transform.CompareTag("Target")) isChasing = true;
+                else isChasing = false;
+            }
+        }
+        else isChasing = false;
+    }
+
+    private void ChasePlayer()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
+    }
+
+    private void Patrol()
+    {
         Transform targetWaypoint = waypoints[currentWaypointIndex];
         transform.position = Vector3.MoveTowards(transform.position, targetWaypoint.position, speed * Time.deltaTime);
 
@@ -66,13 +87,8 @@ public class MobBehaviourScript : MonoBehaviour
         }
     }
 
-    void ChasePlayer()
-    {
-        // Преследование игрока
-        transform.position = Vector3.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
-    }
 
-    void KillPlayer()
+    private void KillPlayer()
     {
         // Действия при убийстве игрока (например, перезагрузка сцены)
         Debug.Log("Player Killed");
