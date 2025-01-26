@@ -98,4 +98,10 @@ public class MobBehaviourScript : MonoBehaviour
     {
         target = newTarget.transform;
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, chaseDistance);
+    }
 }
