@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     public int maxBubbles;
     private int bubbleCounter;
 
+    [Header("Death")]
+    [SerializeField] GameObject deathMenu;
+
     private Rigidbody2D _rb;
     private EnemyManager _enemy;
 
@@ -64,6 +67,7 @@ public class PlayerController : MonoBehaviour
     }
     public void Die()
     {
+        deathMenu.SetActive(true);
         Destroy(gameObject);
     }
 }

@@ -72,6 +72,11 @@ public class BossController : MonoBehaviour
         state = BossState.Ready;
         animator.SetBool("Attack", false);
         animator.SetBool("Restart", true);
+        if (other.transform.tag == "Player")
+        {
+            other.transform.GetComponent<PlayerController>().Die();
+            state = BossState.Inactive;
+        }
     }
 
     private void Die()
