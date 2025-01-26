@@ -3,10 +3,12 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     private Animator animator; // Аниматор двери
+    private Collider2D collider;
 
     private void Start()
     {
         animator = GetComponent<Animator>(); // Получаем компонент аниматора
+        collider = GetComponent<BoxCollider2D>();
     }
 
     // Метод, который вызывается, когда другой объект входит в триггер коллайдера
@@ -27,6 +29,7 @@ public class Door : MonoBehaviour
     private void OpenDoor()
     {
         animator.SetTrigger("Open"); // Запускаем анимацию открытия двери
+        collider.enabled = false;
         Debug.Log("Дверь открыта!");
     }
 }

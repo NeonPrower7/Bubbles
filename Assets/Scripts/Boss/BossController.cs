@@ -20,6 +20,7 @@ public class BossController : MonoBehaviour
     [SerializeField] GameObject key;
 
     private Rigidbody2D _rb;
+    private int columnCounter = 4;
 
     void Awake()
     {
@@ -58,22 +59,20 @@ public class BossController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        _rb.velocity = Vector2.zero;
-        if(other.transform.tag == "Explosive")
+        _rb.velocity = Vector3.zero;
+        transform.position = new Vector3(0, 21, 0);
+        if (other.transform.tag == "Column")
         {
-            state = BossState.Die;
-            Die();
+            Destroy(other.gameObject);
+            columnCounter--;
+            if(columnCounter <= 0) Die();
         }
-        else
-        {
-            transform.position = new Vector3(0, 21, 0);
-            transform.Rotate(0, 0, 0);
-            state = BossState.Ready;
-        }
+        state = BossState.Ready;
     }
 
     private void Die()
     {
+        state = BossState.Die;
         key.SetActive(true);
         Destroy(gameObject);
     }

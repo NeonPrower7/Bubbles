@@ -5,15 +5,16 @@ using UnityEngine.AI;
 
 public class MobBehaviourScript : MonoBehaviour
 {
+    [SerializeField] Animator animator;
     [SerializeField] Transform path; // Ссылка на объект со всеми точками передвижения
-    [SerializeField] Transform player; // Ссылка на объект игрока
-    [SerializeField] LayerMask enemyLayer;
+    [SerializeField] Transform orientation;
+    [SerializeField] LayerMask detectLayer;
     public float speed; // Скорость движения врага
     public float chaseSpeed; // Скорость преследования игрока
     public float chaseDistance; // Радиус обнаружения игрока
-    public float killDistance; // Дистанция для убийства игрока
 
     private Transform[] waypoints; // Точки пути для движения врага
+    private Transform target;
     private RaycastHit2D hit;
     private int currentWaypointIndex = 0;
     private bool isChasing = false;
@@ -30,51 +31,56 @@ public class MobBehaviourScript : MonoBehaviour
 
     void Update()
     {
-        TurnToPlayer();
-        SearchForPlayer();
+        if (target == null) return;
+            
+        SearchForTarget();
 
         if (isChasing)
         {
-            ChasePlayer();
+            ChaseTarget();
         }
         else
         {
             Patrol();
         }
+    }
 
-        // Проверка на убийство игрока
-        if (Vector3.Distance(transform.position, player.position) <= killDistance)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.transform.CompareTag("Player"))
         {
-            KillPlayer();
+            isChasing = false;
+            animator.SetTrigger("Explode");
         }
     }
 
-    private void TurnToPlayer()
+    private void SearchForTarget()
     {
-        Vector2 change = player.position - transform.position;
-        float rotation = Mathf.Atan2(change.x, change.y) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, -rotation);
-    }
-
-    private void SearchForPlayer()
-    {
-        if (Vector3.Distance(transform.position, player.position) <= chaseDistance)
+        if (Vector3.Distance(transform.position, target.position) <= chaseDistance)
         {
-            Debug.DrawRay(transform.position, transform.up * chaseDistance, Color.red);
-            hit = Physics2D.Raycast(transform.position, transform.up, chaseDistance, enemyLayer);
+            TurnToTarget();
+            hit = Physics2D.Raycast(transform.position, orientation.up, chaseDistance, detectLayer);
             if (hit.collider != null)
             {
-                if (hit.transform.CompareTag("Player")) isChasing = true;
-                else if (hit.transform.CompareTag("Target")) isChasing = true;
+                if (hit.transform.CompareTag("Target")) isChasing = true;
+                else if (hit.transform.CompareTag("Player")) isChasing = true;
                 else isChasing = false;
             }
         }
         else isChasing = false;
     }
 
-    private void ChasePlayer()
+    private void TurnToTarget()
     {
-        transform.position = Vector3.MoveTowards(transform.position, player.position, chaseSpeed * Time.deltaTime);
+        Vector2 change = target.position - transform.position;
+        float rotation = Mathf.Atan2(change.x, change.y) * Mathf.Rad2Deg;
+        orientation.rotation = Quaternion.Euler(0, 0, -rotation);
+    }
+
+
+    private void ChaseTarget()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, target.position, chaseSpeed * Time.deltaTime);
     }
 
     private void Patrol()
@@ -88,19 +94,8 @@ public class MobBehaviourScript : MonoBehaviour
         }
     }
 
-
-    private void KillPlayer()
+    public void SetTarget(GameObject newTarget)
     {
-        // Действия при убийстве игрока (например, перезагрузка сцены)
-        Debug.Log("Player Killed");
-        Destroy(player.gameObject);
-        // Здесь можно добавить логику для перезагрузки сцены или уменьшения здоровья игрока
-    }
-
-    // Визуализация зоны обнаружения в редакторе
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, chaseDistance);
+        target = newTarget.transform;
     }
 }
