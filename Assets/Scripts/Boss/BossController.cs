@@ -8,6 +8,7 @@ public class BossController : MonoBehaviour
 {
 
     [SerializeField] Transform player;
+    [SerializeField] Animator animator;
 
     public BossState state;
 
@@ -35,10 +36,9 @@ public class BossController : MonoBehaviour
         else if (state == BossState.Waiting) Aiming();
     }
 
-    public IEnumerator PlayAnimation()
+    public void PlayAnimation()
     {
         state = BossState.Ready;
-        yield return null;
     }
 
     private void Aiming()
@@ -54,6 +54,8 @@ public class BossController : MonoBehaviour
         yield return new WaitForSeconds(rechargeTime);
         state = BossState.Dashing;
         yield return new WaitForSeconds(attackDelayTime);
+        animator.SetBool("Attack", true);
+        animator.SetBool("Restart", false);
         _rb.velocity = transform.up * speed;
     }
 
@@ -68,6 +70,8 @@ public class BossController : MonoBehaviour
             if(columnCounter <= 0) Die();
         }
         state = BossState.Ready;
+        animator.SetBool("Attack", false);
+        animator.SetBool("Restart", true);
     }
 
     private void Die()
