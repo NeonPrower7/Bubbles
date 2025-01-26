@@ -8,6 +8,7 @@ public class BossController : MonoBehaviour
 {
 
     [SerializeField] Transform player;
+    [SerializeField] Animator animator;
 
     public BossState state;
 
@@ -50,9 +51,13 @@ public class BossController : MonoBehaviour
     private IEnumerator Attack()
     {
         state = BossState.Waiting;
+
         yield return new WaitForSeconds(rechargeTime);
         state = BossState.Dashing;
+
         yield return new WaitForSeconds(attackDelayTime);
+        animator.SetBool("Attack", true);
+        animator.SetBool("Restart", false);
         _rb.velocity = transform.up * speed;
     }
 
@@ -67,6 +72,8 @@ public class BossController : MonoBehaviour
             if(columnCounter <= 0) Die();
         }
         state = BossState.Ready;
+        animator.SetBool("Attack", false);
+        animator.SetBool("Restart", true);
     }
 
     private void Die()
